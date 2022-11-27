@@ -90,6 +90,25 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  // 配置图书路由
+  {
+    path: '/book',
+    component: Layout,
+    redirect: '/book/create',
+    meta: { title: '图书管理', icon: 'documentation', roles: ['editor'] },
+    children: [
+      {
+        path: '/book/create',
+        component: () => import('@/views/book/create'),
+        meta: { title: '添加图书', icon: 'edit', roles: ['admin'] }
+      },
+      {
+        path: '/book/list',
+        component: () => import('@/views/book/list'),
+        meta: { title: '图书列表', icon: 'edit', roles: ['editor'] }
+      }
+    ]
+  },
   {
     path: '/error',
     component: Layout,
@@ -133,7 +152,11 @@ export const asyncRoutes = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
+  // 创建路由时先把静态路由添加到路由列表
   routes: constantRoutes
+  // 动态路由在剔除掉无权限的路由后进行添加
+  // 通过router.addRoutes(accessRoutes)与原来的路由表进行合并
+  // 根据路由表生成左侧的菜单栏
 })
 
 const router = createRouter()
